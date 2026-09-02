@@ -23,6 +23,11 @@ COZY_COTTAGE_V2_DIR = (
 RAINY_FLOWER_BEDROOM_DIR = (
     Path(__file__).resolve().parents[1] / "assets" / "rainy-flower-bedroom"
 )
+WINTER_OBSERVATORY_LIBRARY_DIR = (
+    Path(__file__).resolve().parents[1]
+    / "assets"
+    / "winter-observatory-library-loft"
+)
 ROMANTIC_PREVIEW_PATH = ROMANTIC_OUTPUT_DIR / "01-rain-garden-loft-preview.jpeg"
 BLIZZARD_PREVIEW_PATH = ROMANTIC_OUTPUT_DIR / "02-blizzard-soft-nest-preview.jpeg"
 CRESCENT_STAIR_PREVIEW_PATH = (
@@ -33,6 +38,10 @@ COZY_COTTAGE_V2_PREVIEW_PATH = (
 )
 RAINY_FLOWER_BEDROOM_PREVIEW_PATH = (
     RAINY_FLOWER_BEDROOM_DIR / "01-rainy-flower-bedroom-preview.jpeg"
+)
+WINTER_OBSERVATORY_LIBRARY_PREVIEW_PATH = (
+    WINTER_OBSERVATORY_LIBRARY_DIR
+    / "01-winter-observatory-library-loft-preview.jpeg"
 )
 
 ANCHOR_PROMPT = """
@@ -451,6 +460,48 @@ Avoid extra beds, extra doors, bathrooms, kitchens, stairs, lofts, people, dupli
 circulation, television blocking the window, random text, logos, indoor rain, distorted furniture or dark exposure.
 """.strip()
 
+WINTER_OBSERVATORY_LIBRARY_PROMPT = """
+Create a photorealistic, imaginative two-floor Winter Observatory Library Loft, vertical 3:4 premium interior-design
+photography. Use a close elevated three-quarter view from front-left so both floors and the complete staircase route
+are visible. The interior fills 92 percent of the frame; do not show an exterior facade, foundation or dollhouse.
+
+BUILDABLE ARCHITECTURE:
+- Exactly two floors. The front-left living room is double height; the rear and right portions support the upper floor.
+- A huge two-story arched steel-framed window fills the left wall. Outside is a fierce blue-grey winter blizzard with
+  snow-laden pines, diagonal snow, ice crystals and meltwater on the exterior glass. All snow remains outside.
+- Ground-floor center-left is a luxurious library lounge: one sweeping crescent emerald velvet sofa, two rounded
+  oxblood armchairs, oversized ottoman, low dark-walnut table, thick patterned wool rug, faux-fur overlays, many
+  embroidered pillows and knitted throws. One tortoiseshell cat sleeps on the sofa beside stacked books.
+- A compact closed fireplace sits on a solid central wall with a fireproof stone hearth and a real black flue running
+  continuously to the roof. A tea cabinet with cups and kettle occupies a rear niche; full kitchen and bathroom exist
+  in an unseen service core behind the camera and do not appear in this composition.
+- A floor-to-ceiling walnut library covers the right wall around, but never across, the stair path. Shelves contain
+  books, ceramics, framed photographs, plants, blanket baskets and warm integrated lights.
+- The right side contains one code-compliant U-shaped library staircase, 1.05 m wide. The first flight begins at
+  ground-floor front-right and rises through 8 complete rectangular steps toward rear-right. It ends on a fully
+  supported 1.15 m by 1.15 m square landing. The staircase reverses exactly 180 degrees at this landing. The second
+  parallel flight rises through 9 complete rectangular steps toward the front-right upper landing. The final tread is
+  flush with a clearly open second-floor entry. Show bottom step, both flights, square landing and upper connection.
+  Continuous walnut handrails and 1.1 m brass-and-wood guards protect both flights and landing. No floating steps,
+  missing treads, ladder, spiral, branch, blocked exit or decorative shelf may enter the walking path.
+- The upper floor contains one open sleeping library only: a wide low bed against the solid rear wall, upholstered
+  headboard, thick duvet, layered quilts, pillows, bed-end bench and a reading chaise. Keep the bed 1.5 m behind a
+  continuous safe guardrail. The stair opens directly into the bedroom without a door, bridge or balcony.
+- Beside the upper arched window, create a compact observatory nook with one brass telescope on a stable tripod,
+  one enveloping chair, footstool and celestial book table. The telescope does not block circulation or the railing.
+
+STYLE AND LIGHT:
+Use warm ivory plaster, rich walnut, emerald green, oxblood red, midnight blue and antique brass. Combine contemporary
+Art Nouveau curves with a scholarly library atmosphere. Add pleated silk lamps, opal globes, botanical and celestial
+art, velvet curtains, embroidered bedding, Persian-inspired rugs and abundant soft textiles. Interior lighting is
+bright and warm at 2400-2700K, layered from fireplace, shelf lights, sconces and paper lanterns. The room feels
+romantic, intelligent, tactile and deeply inviting, never gloomy or antique-shop cluttered. Ultra-realistic materials,
+snow, glass, books and textiles, HDR, sharp detail, 8k.
+
+Avoid extra floors, extra rooms, visible service doors, broken stairs, railing blocking the stair exit, unguarded bed,
+indoor snow, people, duplicate animals, deformed books, floating furniture, neon cyberpunk lighting, text or watermark.
+""".strip()
+
 
 def image_data_uri(path: Path) -> str:
     encoded = base64.b64encode(path.read_bytes()).decode("ascii")
@@ -620,6 +671,17 @@ async def generate_rainy_flower_bedroom_preview(
     )
 
 
+async def generate_winter_observatory_library_preview(
+    client: httpx.AsyncClient,
+) -> dict:
+    WINTER_OBSERVATORY_LIBRARY_DIR.mkdir(parents=True, exist_ok=True)
+    return await request_image(
+        client,
+        WINTER_OBSERVATORY_LIBRARY_PROMPT,
+        WINTER_OBSERVATORY_LIBRARY_PREVIEW_PATH,
+    )
+
+
 async def generate_variants(client: httpx.AsyncClient) -> list[dict]:
     if not ANCHOR_PATH.exists():
         raise FileNotFoundError(f"Missing anchor image: {ANCHOR_PATH}")
@@ -652,6 +714,7 @@ async def main() -> None:
         "cozy-cottage-v2-fix",
         "cozy-cottage-v2-style-variants",
         "rainy-flower-bedroom-preview",
+        "winter-observatory-library-preview",
     }:
         raise SystemExit(f"Unknown LOFT_MODE: {mode}")
 
@@ -674,6 +737,10 @@ async def main() -> None:
             results.extend(await generate_cozy_cottage_v2_style_variants(client))
         if mode == "rainy-flower-bedroom-preview":
             results.append(await generate_rainy_flower_bedroom_preview(client))
+        if mode == "winter-observatory-library-preview":
+            results.append(
+                await generate_winter_observatory_library_preview(client)
+            )
         if mode in {"anchor", "all"}:
             results.append(await generate_anchor(client))
         if mode in {"variants", "all"}:
