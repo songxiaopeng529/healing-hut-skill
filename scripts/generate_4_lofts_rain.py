@@ -502,6 +502,69 @@ Avoid extra floors, extra rooms, visible service doors, broken stairs, railing b
 indoor snow, people, duplicate animals, deformed books, floating furniture, neon cyberpunk lighting, text or watermark.
 """.strip()
 
+WINTER_OBSERVATORY_LIBRARY_PRESERVE = """
+Use the supplied Winter Observatory Library Loft image as an immutable architecture and camera reference. Preserve
+the exact close viewpoint, two floors, double-height arched windows, floor slabs, fireplace, vertical flue, walnut
+library wall, complete staircase path, every stair tread, upper entry opening, guardrails, bedroom position, telescope
+position and circulation. Do not add, remove, move or redesign walls, windows, floors, stairs, landings, railings,
+fireplace, chimney, rooms, doors or the large furniture zones. Keep one tortoiseshell cat on the ground-floor sofa.
+Keep the severe blizzard outside and the interior dry, bright and warmly lit. Change all movable furniture designs,
+upholstery, bedding, rugs, curtains, lamps, artwork, books, plants and decorative objects according to the requested
+style while maintaining realistic clearances. Photorealistic premium interior-design photography, sharp detail, 8k.
+""".strip()
+
+WINTER_OBSERVATORY_LIBRARY_VARIANTS = [
+    {
+        "name": "02-midnight-celestial-library-loft",
+        "prompt": (
+            WINTER_OBSERVATORY_LIBRARY_PRESERVE
+            + " Restyle the complete interior as a luminous midnight celestial salon. Replace the lounge furniture "
+            "with a sweeping midnight-blue velvet sofa, two aubergine rounded chairs and a large cloud-soft ottoman. "
+            "Use a dark walnut oval table, deep-pile navy rug with subtle brass constellation lines, silver-blue "
+            "curtains, moon-white faux fur, embroidered star-map cushions and layered indigo bedding upstairs. "
+            "Use brass orbital lamps, opal globe lights, framed celestial charts, astronomy books and small crystal "
+            "objects. Palette: midnight blue, aubergine, silver blue, warm ivory, walnut and antique brass. Keep the "
+            "room warm, richly illuminated and inviting, never dark or sci-fi neon."
+        ),
+    },
+    {
+        "name": "03-forest-arts-crafts-library-loft",
+        "prompt": (
+            WINTER_OBSERVATORY_LIBRARY_PRESERVE
+            + " Restyle the complete interior as a handcrafted Arts and Crafts forest library. Replace the sofa with "
+            "a generous moss-green wool sectional, add two rust-red leather club chairs and an oak blanket chest used "
+            "as a coffee table. Use botanical patterned rugs, ochre cushions, heavy woven forest-green curtains, "
+            "hand-blocked leaf textiles and layered moss-and-rust bedding. Add hammered copper lamps, handcrafted oak "
+            "details, pottery, pressed-botanical art, baskets and evergreen branches. Palette: moss, rust, ochre, "
+            "cream, quarter-sawn oak and copper. Richly tactile, artisanal, bright and warm rather than rustic-dark."
+        ),
+    },
+    {
+        "name": "04-rose-salon-library-loft",
+        "prompt": (
+            WINTER_OBSERVATORY_LIBRARY_PRESERVE
+            + " Restyle the complete interior as a sophisticated rose-and-powder-blue contemporary salon. Replace "
+            "the sofa with a curved dusty-rose boucle sofa, add two powder-blue scalloped armchairs and an ivory "
+            "upholstered ottoman. Use a pale walnut rounded table, cream floral wool rug, blush velvet curtains, "
+            "champagne-brass lamps, watercolor botanical and celestial art, porcelain vases, fresh flowers and soft "
+            "rose, blue and ivory bedding upstairs. Palette: dusty rose, powder blue, warm ivory, pale walnut, sage "
+            "and champagne brass. Feminine, romantic, mature, airy and richly layered, never sugary or childish."
+        ),
+    },
+    {
+        "name": "05-warm-modernist-library-loft",
+        "prompt": (
+            WINTER_OBSERVATORY_LIBRARY_PRESERVE
+            + " Restyle the complete interior as a playful warm modernist reading loft. Replace the lounge with a "
+            "rounded modular ivory sofa, one burnt-orange lounge chair, one cobalt-blue lounge chair and mustard "
+            "soft poufs. Use a sculptural smoked-walnut coffee table, thick geometric cream rug, cobalt curtains, "
+            "tomato-red and mustard cushions, color-blocked bedding upstairs, frosted globe lamps and restrained "
+            "graphic artwork. Add ceramic objects, books and architectural plants. Palette: ivory, cobalt, burnt "
+            "orange, tomato red, mustard, walnut and small black accents. Bold, warm, soft and polished, never harsh."
+        ),
+    },
+]
+
 
 def image_data_uri(path: Path) -> str:
     encoded = base64.b64encode(path.read_bytes()).decode("ascii")
@@ -682,6 +745,34 @@ async def generate_winter_observatory_library_preview(
     )
 
 
+async def generate_winter_observatory_library_variants(
+    client: httpx.AsyncClient,
+) -> list[dict]:
+    if not WINTER_OBSERVATORY_LIBRARY_PREVIEW_PATH.exists():
+        raise FileNotFoundError(
+            f"Missing reference image: {WINTER_OBSERVATORY_LIBRARY_PREVIEW_PATH}"
+        )
+    reference = image_data_uri(WINTER_OBSERVATORY_LIBRARY_PREVIEW_PATH)
+    variants = WINTER_OBSERVATORY_LIBRARY_VARIANTS
+    style_index = os.getenv("OBSERVATORY_STYLE_INDEX")
+    if style_index:
+        requested_index = int(style_index)
+        if not 1 <= requested_index <= len(variants):
+            raise ValueError(f"Invalid OBSERVATORY_STYLE_INDEX: {requested_index}")
+        variants = [variants[requested_index - 1]]
+    return await asyncio.gather(
+        *[
+            request_image(
+                client,
+                variant["prompt"],
+                WINTER_OBSERVATORY_LIBRARY_DIR / f"{variant['name']}.jpeg",
+                reference,
+            )
+            for variant in variants
+        ]
+    )
+
+
 async def generate_variants(client: httpx.AsyncClient) -> list[dict]:
     if not ANCHOR_PATH.exists():
         raise FileNotFoundError(f"Missing anchor image: {ANCHOR_PATH}")
@@ -715,6 +806,7 @@ async def main() -> None:
         "cozy-cottage-v2-style-variants",
         "rainy-flower-bedroom-preview",
         "winter-observatory-library-preview",
+        "winter-observatory-library-variants",
     }:
         raise SystemExit(f"Unknown LOFT_MODE: {mode}")
 
@@ -740,6 +832,10 @@ async def main() -> None:
         if mode == "winter-observatory-library-preview":
             results.append(
                 await generate_winter_observatory_library_preview(client)
+            )
+        if mode == "winter-observatory-library-variants":
+            results.extend(
+                await generate_winter_observatory_library_variants(client)
             )
         if mode in {"anchor", "all"}:
             results.append(await generate_anchor(client))
