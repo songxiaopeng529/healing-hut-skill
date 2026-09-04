@@ -12,40 +12,48 @@ API_URL = "https://ark.cn-beijing.volces.com/api/v3/images/generations"
 API_KEY = os.environ["ARK_API_KEY"]
 ENDPOINT_ID = os.environ["SEEDREAM_ENDPOINT_ID"]
 ROOT = Path(__file__).resolve().parents[1]
-REFERENCE_PATH = ROOT / "images" / "02-right-window-hammock-lounge.jpeg"
-OUTPUT_PATH = ROOT / "images" / "03-vivid-bamboo-rain-hammock-lounge.jpeg"
+REFERENCE_PATH = ROOT / "images" / "03-vivid-bamboo-rain-hammock-lounge.jpeg"
+OUTPUT_PATH = ROOT / "images" / "04-refined-solid-bamboo-rain-loft.jpeg"
 
 PROMPT = """
-Use the supplied right-window hammock-lounge loft image as an immutable architectural reference. Preserve exactly the
-same camera, crop, two floors, right-side arched curtain window, left-rear mezzanine, solid upper bed, complete
-L-shaped stair, fireplace, flue, low suspended lounge, independent portal frame, four tension cables, circulation,
-cat and guitar. Do not move or redesign any structural element, stair, guard, window, floor, bed or hammock support.
+Use the supplied vivid bamboo-rain hammock-lounge loft image as the visual reference. Preserve the same close camera,
+right-side arched bamboo-rain window, upper bed location, left stair route, low suspended lounge, independent portal
+frame, four hammock cables, cat, guitar, circulation and bright coral-aqua palette.
 
-CHANGE THE EXTERIOR:
-Replace the frozen lake and snow with a lush emerald bamboo forest in a violent summer rainstorm. Dense bamboo fills
-the entire view beyond the right window. Strong wind bends the tall bamboo culms and streams all leaves in one clear
-direction, creating a visible swaying rhythm. Show diagonal heavy rain, rain mist, wet leaves, distant green hills,
-large droplets and long water trails on the exterior glass. All rain remains outside; the interior stays dry.
+REBUILD THE ARCHITECTURE TO FEEL SOLID AND REFINED:
+- Remove every fireplace element completely: no firebox, hearth, chimney, black flue or smoke pipe.
+- Replace the fireplace wall with a sophisticated floor-to-ceiling curved storage composition: pearl microcement,
+  rounded closed cabinets, pale-ash shelves, asymmetrical illuminated niches, ribbed glass doors, orchids, ceramics,
+  fashion books and concealed warm lighting.
+- Replace all exposed black or thin steel roof arches and mezzanine framing with substantial pearl-white architectural
+  construction. Use a 35 cm thick curved reinforced-concrete or engineered-timber mezzanine slab wrapped in smooth
+  pearl microcement. Support it with broad rounded load-bearing walls and two integrated oval columns. No visible
+  skeletal steel frame beneath the upper floor.
+- Give the upper floor a continuous 1.1 m curved solid parapet with a brass cap and only a few inset laminated-glass
+  panels. Keep a clear opening exactly where the stair arrives. The bed stays safely 1.5 m behind the edge.
+- Refine the left L-shaped staircase with solid pearl-white sidewalls, closed pale-ash risers, wide wood treads, one
+  supported rectangular landing and a continuous rounded champagne-brass handrail. Keep both flights complete and
+  the final tread flush with the upper slab. No open industrial stringers.
+- Make the ground floor visually substantial with continuous pale terrazzo and pale-ash flooring, deep baseboards,
+  integrated floor edges and realistic wall-to-floor junctions.
 
-RESTYLE THE ENTIRE INTERIOR AS BRIGHT FASHION-FORWARD FEMININE FUTURISM:
-- Remove the dark, old-fashioned industrial mood. Refinish exposed steel arches and portal frame in pearl white and
-  champagne silver. Replace dark walnut surfaces with pale ash, glossy warm-white resin and small brushed-brass details.
-- Restyle the suspended lounge with vivid coral-pink woven sides, a pearl boucle mattress, raspberry velvet cushions,
-  aqua quilted throws and lemon-yellow accents. Keep the cat and guitar naturally positioned.
-- Replace all dark chairs and poufs with sculptural petal-shaped seating in coral, aqua, citron and ivory. Use a soft
-  abstract rug with flowing color fields, a translucent acrylic low table and rounded lacquered side tables.
-- Restyle the upper bed with a curved blush upholstered headboard, crisp ivory duvet, coral-and-aqua gradient quilt,
-  embroidered floral pillows and a soft lemon bed-end bench. Keep the bed firmly on the mezzanine floor.
-- Replace plain pendant lamps with contemporary frosted flower-petal pendants in warm 2500K light. Add thin concealed
-  light lines, modern botanical artwork, playful ceramic objects, fashion books, orchids and fresh green plants.
-- Use light ivory sheer curtains and coral outer curtains without covering the bamboo view.
+MAKE WALL DECORATION HIGHLY DETAILED:
+Use smooth microcement, curved fluted wall panels, padded blush wall sections, shallow floral-relief plaster, slim
+brass reveals, rounded crown transitions and precisely lit display niches. Avoid blank unfinished walls.
 
-The result is vivid, youthful, sophisticated and feminine without becoming childish, sugary, vintage or cluttered.
-Use pearl ivory, coral pink, raspberry, aqua, lemon yellow, fresh green and light ash as a balanced multicolor palette.
-Keep at least 70 percent soft textile surfaces. Premium contemporary interior editorial, ultra-realistic, HDR, 8k.
+PRESERVE THE FASHION-FORWARD FEMININE INTERIOR:
+Keep the coral-pink hammock sofa with pearl boucle mattress, raspberry and aqua cushions, lemon accents, flower-petal
+chairs, translucent acrylic table, abstract multicolor rug, coral curtains, frosted floral pendants and warm 2500K
+lighting. Keep the upper bed firmly on the solid floor with curved blush headboard and vivid layered bedding.
+Outside the right window, preserve the wind-bent emerald bamboo forest, diagonal heavy rain, rain mist, wet leaves,
+distant green hills, large exterior droplets and long glass water trails. All rain stays outside.
 
-Avoid old dark wood, brown-dominant palette, antique furniture, beige monotony, purple neon, princess styling,
-structural changes, suspended upper bed, missing cables, indoor rain, duplicate cats, people, text or watermark.
+The result is structurally reassuring, luxurious, youthful, vivid and finely finished, not industrial or old-fashioned.
+Premium contemporary interior editorial, ultra-realistic materials, HDR, sharp detail, 8k.
+
+Avoid fireplace, chimney, exposed skeletal mezzanine steel, thin slab, unsupported upper floor, open stair stringers,
+blank walls, dark wood dominance, antique furniture, purple neon, suspended upper bed, missing hammock cables, indoor
+rain, duplicate cats, people, text or watermark.
 """.strip()
 
 
